@@ -1,5 +1,8 @@
 package machines.UI;
 
+import machines.model.Excavator;
+import machines.model.Machine;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -25,145 +28,85 @@ public class Implementation {
 
     public static void main(String[] args) throws ParseException {
 
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-
-        GregorianCalendar curTime = new GregorianCalendar(1, 1, 1, ST_LABOR_HH, ST_LABOR_MM, 0);
-//        GregorianCalendar endTime = (GregorianCalendar) curTime.clone();
-////        endTime.add(Calendar.HOUR,16);
-        GregorianCalendar endTime = new GregorianCalendar(1, 1, 1, ST_LABOR_HH + 16, ST_LABOR_MM, 0);
+        GregorianCalendar curTimeBuld = new GregorianCalendar(0, 0, 0, ST_LABOR_HH, ST_LABOR_MM, 0);
+        GregorianCalendar curTimeEx = new GregorianCalendar(0, 0, 0, ST_LABOR_HH, ST_LABOR_MM, 0);
+        GregorianCalendar endTime = new GregorianCalendar(0, 0, 0, ST_LABOR_HH + 16, ST_LABOR_MM, 0);
+        Date ctB = curTimeBuld.getTime();
+        Date ctE = curTimeEx.getTime();
+        Date et = endTime.getTime();
 
         Object[][] buld = new Object[ROW_MASS][COLUMN_MASS];
         Object[][] ex1 = new Object[ROW_MASS][COLUMN_MASS];
         Object[][] ex2 = new Object[ROW_MASS][COLUMN_MASS];
 
+
+        System.out.println("BULLDOZER: ");
+        Machine bulldozer = new Machine();
+        bulldozer.fillArray(buld, curTimeBuld, endTime);
+        printArray(buld);
+
+        System.out.println("EXCAVATOR: ");
+        Excavator excavator1 = new Excavator();
+        excavator1.fillArrayEx(ex1, curTimeEx, endTime,buld,M_WORK_EKS,M_REM_EKS_S3S6);
+        printArray(ex1);
+
 /*
-        System.out.println("BULDOZER: ");
-        System.out.print(sdf.format(calen.getTime()) + " - ");
+        //Удалисть лишнее
+        Object[][] test = new Object[2][2];
+        GregorianCalendar testTime = new GregorianCalendar(0, 0, 0, 6,30 , 0);
+        GregorianCalendar testTime1 = new GregorianCalendar(0, 0, 0, 6, 0, 0);
+        GregorianCalendar testTime2 = new GregorianCalendar(0, 0, 0, 7, 0, 0);
+        for (int i = 0; i < 2; i++) {
+            test[i][0] = testTime1 .getTime();
+            test[i][1] = testTime2 .getTime();
+         }
+        if(testTime.after((Date) test[0][0])){
+            System.out.println("true");
+        }
+        else System.out.println("nifiga");
+        Calendar cal = null;
+        cal = Calendar.getInstance();
+        cal.setTime((Date) test[0][0]);
+
+        double difference;
+        difference = (double) (cal.getTimeInMillis() - endTime.getTimeInMillis()) / 60 / 60000;
+        System.out.println(cal.getTime());
+        System.out.println(endTime.getTime());
+        System.out.println(difference);
+        //Удалисть лишнее
 */
 
-        double sumWork = 0;
-        double sumRem = 0;
-        double summ = 0;
+    }
 
-
-        int status = 0;
-        double randBuld = 0;
-        double difference = 0;
-
-        for (int i = 0; i < ROW_MASS ; i++) {
-            if(curTime.getTime().after(endTime.getTime()) || curTime.getTime().equals(endTime.getTime())){
-                break;
-            }
-            buld[i][0] = curTime.getTime();
-            if ((i%2) == 0) {
-                randBuld = getRandomNumb(M_WORK_BULD);
-                //        sumWork =+ randWorkBuld;
-                status = 1; // status - work
-            }
-            else{
-                randBuld = getRandomNumb(M_REP_BULD_S3S6);
-                status = 2; // status - repair
-            }
-            curTime.add(Calendar.MINUTE,(int)(randBuld * 60));
-//        System.out.println(sdf.format(calen.getTime()) + " (" + randBuld + ")");
-            if (curTime.getTime().after(endTime.getTime()) && status == 1) {
-//                System.out.println("randBuld1: " + randBuld);
-//                System.out.println("cur1: " + sdf.format(curTime.getTime()));
-//                System.out.println(endTime.getTimeInMillis());
-
-                difference = (double) (curTime.getTimeInMillis()-endTime.getTimeInMillis())/60/60000;
-                int dif = (int)(difference * 60);
-                curTime.add(Calendar.MINUTE,-dif);
-                randBuld = Math.abs(Math.abs(randBuld) - Math.abs(difference));
-                randBuld = Math.round(randBuld*10)/10.0;
-//                System.out.println("cur2: " + sdf.format(curTime.getTime()));
-//                System.out.println("end: " + sdf.format(endTime.getTime()));
-//                System.out.println("randBuld2: " + randBuld);
-//                System.out.println("Dif: " + difference);
-            }
-            buld[i][1] = curTime.getTime();
-            buld[i][2] = status;
-            buld[i][3] = randBuld;
-
-        }
-/*        GregorianCalendar enddTime = new GregorianCalendar(0, 0, 0, 23, ST_LABOR_MM + 30, 0);
-        int m = enddTime.get(Calendar.HOUR_OF_DAY)*60 + enddTime.get(Calendar.MINUTE) ;
-        int n = endTime.get(Calendar.HOUR_OF_DAY)*60 + endTime.get(Calendar.MINUTE) ;
-//        int m = enddTime.get(Calendar.HOUR);
-//        endTime.add(Calendar.MINUTE, m);
-        System.out.println(sdf.format(enddTime.getTime()));
-        System.out.println(sdf.format(endTime.getTime()));
-        System.out.println((double)(m-n)/60);
-        System.out.println(m);
-        System.out.println(n);*/
-
-
+    private static void printArray(Object[][] array){
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String st = null;
         for (int i = 0; i < ROW_MASS; i++) {
 
             for (int j = 0; j < COLUMN_MASS-2; j++) {
-                if(buld[i][j] == null){
+                if(array[i][j] == null){
                     return;
                 }
-                System.out.print(sdf.format(buld[i][j]));
+                System.out.print(sdf.format(array[i][j]));
                 System.out.print(" - ");
             }
-            if (buld[i][2].equals(1)) {
+            if (array[i][2].equals(1)) {
                 st = "work";
 
-            } else if (buld[i][2].equals(2)) {
+            } else if (array[i][2].equals(2)) {
                 st = "repair";
 
-            } else if (buld[i][2].equals(3)) {
+            } else if (array[i][2].equals(3)) {
                 st = "wait";
 
             } else {
             }
             System.out.print(" :" + st);
-            System.out.println(" (" + buld[i][3] + ")");
+            System.out.println(" (" + array[i][3] + ")");
         }
-/*        double randRemBuldS6 = getRandomNumb(M_REM_BULD_S6);
-        double randRemBuldS3S6 = getRandomNumb(M_REP_BULD_S3S6);*/
-
-/*
-
-        if ((sumWork =+ randWorkBuld + sumRem) < LABOR_HOURS*2) {
-            
-        }
-*/
-
-/*
-        System.out.println("Работа Бульдозера:");
-        System.out.println("Работа Бульдозера:");
-*/
-
-
-/*
-        for (int i = 0; i < 20; i++) {
-            System.out.println(getRandomNumb(4));
-        }
-*/
-
-/*
-        GregorianCalendar calen = new GregorianCalendar();
-        calen.set(Calendar.HOUR, 8);
-        calen.set(Calendar.MINUTE, 00);
-        System.out.println(calen.get(Calendar.HOUR)+":"+calen.get(Calendar.MINUTE) );
-        double qqqq = 1.5;
-        int min = (int)(qqqq * 60);
-        calen.add(Calendar.MINUTE,min);
-        System.out.println(calen.get(Calendar.HOUR)+":"+calen.get(Calendar.MINUTE) + "\n min: " + min );
-*/
-
     }
 
-    private static double getRandomNumb(double M) {
 
-        Random r = new Random();
-        double exRand =  -M * Math.log(1 - r.nextDouble());
-        return Math.round(exRand*10)/10.0;
-
-    }
 }
 
 

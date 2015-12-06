@@ -1,8 +1,13 @@
 package machines.UI;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import machines.model.Excavator;
 import machines.model.Machine;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -12,79 +17,264 @@ import java.util.*;
  */
 public class Implementation {
 
-    public static final double M_WORK_BULD = 6;
-    public static final double M_WORK_EKS = 4;
-    public static final double M_REM_EKS_S3S6 = 0.25;
-    public static final double M_REM_EKS_S6 = 1;
+    public static final String PARAM = "E://Nade//FileDiplomaJava//Java_ImModel_Proj//inputParam.txt";
+
+//    public static final double P = readFromTheFile(PARAM,0);
+
+    public static final double M_WORK_BULD = readFromTheFile(PARAM,0);
+    public static final double M_WORK_EXC = readFromTheFile(PARAM,1);
+    public static final double M_REP_EXC_S3S6 = readFromTheFile(PARAM,2);
+    public static final double M_REP_EXC_S6 = readFromTheFile(PARAM,3);
+    public static final double M_REP_BULD_S3S6 = readFromTheFile(PARAM,4);
+    public static final double M_REP_BULD_S6 = readFromTheFile(PARAM,5);
+
+    public static final int COST_INACTIV_EXC = (int) readFromTheFile(PARAM,6);
+    public static final int COST_INACTIV_BULD = (int) readFromTheFile(PARAM,7);
+    public static final int INCOME_EXC = (int) readFromTheFile(PARAM,8);
+    public static final int INCOME_BULD = (int) readFromTheFile(PARAM,9);
+    public static final int SALARY_S3 = (int) readFromTheFile(PARAM,10);
+    public static final int SALARY_S6 = (int) readFromTheFile(PARAM,11);
+
+
+    public static final int LABOR_HOURS = (int) readFromTheFile(PARAM,12);
+
+    public static final int ST_LABOR_HH = (int) readFromTheFile(PARAM,13);
+    public static final int ST_LABOR_MM = (int) readFromTheFile(PARAM,14);
+
+    public static final int DAYS = (int) readFromTheFile(PARAM,15);
+    public static final int DAY_TO_PRINT = (int) readFromTheFile(PARAM,16);
+
+    /*public static final double M_WORK_BULD = 6;
+    public static final double M_WORK_EXC = 4;
+    public static final double M_REP_EXC_S3S6 = 0.25;
+    public static final double M_REP_EXC_S6 = 1;
     public static final double M_REP_BULD_S3S6 = 1.5;
-    public static final double M_REM_BULD_S6 = 2;
+    public static final double M_REP_BULD_S6 = 2;
+
+    public static final int COST_INACTIV_EXC = 500;
+    public static final int COST_INACTIV_BULD = 300;
+    public static final int INCOME_EXC = 500;
+    public static final int INCOME_BULD = 300;
+    public static final int SALARY_S3 = 60;
+    public static final int SALARY_S6 = 100;
+
 
     public static final double LABOR_HOURS = 8.0;
 
     public static final int ST_LABOR_HH = 6;
     public static final int ST_LABOR_MM = 0;
+
+    public static final int DAYS = 100;
+    public static final int DAY_TO_PRINT = 10;*/
+
     public static final int ROW_MASS = 50;
     public static final int COLUMN_MASS = 4;
 
-    public static void main(String[] args) throws ParseException {
+    private static int totalIncome;
+    private static int totalIncomeDay;
+    private static int totalCost;
+    private static int totalCostDay;
+    private static int salary;
+    private static int salaryDay;
+    private static int profitS6;
+    private static int profitS6S3;
+    private static int profitDay;
+    private static double sumRep;
+    private static double tSumRep;
+    private static double sumWork;
+    private static double tSumWork;
+    private static double sumWait;
+    private static double tSumWait;
 
-        GregorianCalendar curTimeBuld = new GregorianCalendar(0, 0, 0, ST_LABOR_HH, ST_LABOR_MM, 0);
-        GregorianCalendar curTimeEx = new GregorianCalendar(0, 0, 0, ST_LABOR_HH, ST_LABOR_MM, 0);
-        GregorianCalendar endTime = new GregorianCalendar(0, 0, 0, ST_LABOR_HH + 16, ST_LABOR_MM, 0);
-        Date ctB = curTimeBuld.getTime();
-        Date ctE = curTimeEx.getTime();
-        Date et = endTime.getTime();
-
-        Object[][] buld = new Object[ROW_MASS][COLUMN_MASS];
-        Object[][] ex1 = new Object[ROW_MASS][COLUMN_MASS];
-        Object[][] ex2 = new Object[ROW_MASS][COLUMN_MASS];
 
 
-        System.out.println("BULLDOZER: ");
-        Machine bulldozer = new Machine();
-        bulldozer.fillArray(buld, curTimeBuld, endTime);
-        printArray(buld);
+    public static void main(String[] args) throws ParseException, IOException {
 
-        System.out.println("EXCAVATOR: ");
-        Excavator excavator1 = new Excavator();
-        excavator1.fillArrayEx(ex1, curTimeEx, endTime,buld,M_WORK_EKS,M_REM_EKS_S3S6);
-        printArray(ex1);
+        GregorianCalendar endTime = new GregorianCalendar(0, 0, 0, ST_LABOR_HH + (LABOR_HOURS * 2), ST_LABOR_MM, 0);
 
-/*
-        //Удалисть лишнее
-        Object[][] test = new Object[2][2];
-        GregorianCalendar testTime = new GregorianCalendar(0, 0, 0, 6,30 , 0);
-        GregorianCalendar testTime1 = new GregorianCalendar(0, 0, 0, 6, 0, 0);
-        GregorianCalendar testTime2 = new GregorianCalendar(0, 0, 0, 7, 0, 0);
-        for (int i = 0; i < 2; i++) {
-            test[i][0] = testTime1 .getTime();
-            test[i][1] = testTime2 .getTime();
-         }
-        if(testTime.after((Date) test[0][0])){
-            System.out.println("true");
+//        Для S6 +S3
+        totalIncome =0;
+        totalCost =0;
+        tSumRep=0;
+        tSumWork=0;
+        tSumWait=0;
+
+        for (int k = 0; k < DAYS; k++) {
+            Machine bulldozer = new Machine();
+            Excavator excavator1 = new Excavator();
+            Excavator excavator2 = new Excavator();
+
+            bulldozer.fillArray(bulldozer.massif, bulldozer.curTime, endTime,M_WORK_BULD,M_REP_BULD_S3S6);
+            calculatParameters(bulldozer,INCOME_BULD,COST_INACTIV_BULD);
+
+            excavator1.fillArrayEx(excavator1.massif, excavator1.curTime, endTime,bulldozer.massif, M_WORK_EXC, M_REP_EXC_S3S6);
+            calculatParameters(excavator1,INCOME_EXC ,COST_INACTIV_EXC);
+
+            excavator2.fillArrayEx2(excavator2.massif, excavator2.curTime, endTime,bulldozer.massif,excavator1.massif, M_WORK_EXC, M_REP_EXC_S3S6);
+            calculatParameters(excavator2,INCOME_EXC ,COST_INACTIV_EXC);
+
+            totalIncomeDay = bulldozer.income + excavator1.income + excavator2.income;
+            sumRep = Math.round((bulldozer.sumRep + excavator1.sumRep + excavator2.sumRep) * 10) / 10.0;
+            sumWork = Math.round((bulldozer.sumWork + excavator1.sumWork + excavator2.sumWork) * 10) / 10.0;
+            sumWait = Math.round((bulldozer.sumWait  + excavator1.sumWait + excavator2.sumWait) * 10) / 10.0;
+            salaryDay = (int) (SALARY_S3 * sumRep + SALARY_S6 * sumRep);
+            totalCostDay = salaryDay + bulldozer.cost + excavator1.cost  + excavator2.cost ;
+            profitDay = totalIncomeDay - totalCostDay;
+
+            totalIncome += totalIncomeDay;
+            totalCost += totalCostDay;
+            profitS6S3 += profitDay;
+            tSumWork += sumWork;
+            tSumWait += sumWait;
+            tSumRep += sumRep;
+
+            if (k == DAY_TO_PRINT) {
+                System.out.println("S6+S3");
+                printDay(bulldozer, excavator1, excavator2,DAY_TO_PRINT);
+            }
+
+
         }
-        else System.out.println("nifiga");
-        Calendar cal = null;
-        cal = Calendar.getInstance();
-        cal.setTime((Date) test[0][0]);
+        totalIncome = totalIncome / DAYS;
+        totalCost = totalCost / DAYS;
+        profitS6S3 = profitS6S3 / DAYS;
+        tSumWork = Math.round((tSumWork / DAYS) * 10) / 10.0;
+        tSumWait = Math.round((tSumWork / DAYS) * 10) / 10.0;
+        tSumRep = Math.round((tSumWork / DAYS) * 10) / 10.0;
 
-        double difference;
-        difference = (double) (cal.getTimeInMillis() - endTime.getTimeInMillis()) / 60 / 60000;
-        System.out.println(cal.getTime());
-        System.out.println(endTime.getTime());
-        System.out.println(difference);
-        //Удалисть лишнее
-*/
+        System.out.println("\nFor " + DAYS + " days:");
+        System.out.println("sumWork: " + tSumWork
+                +"\nsumWait: " + tSumWait
+                +"\nsumRepair: " + tSumRep
+                +"\ntotalIncome: " + totalIncome
+                +"\ntotalCost : " + totalCost
+                +"\nprofit: " + profitS6S3);
+
+//        ??? S6
+        totalIncome =0;
+        totalCost =0;
+        tSumRep=0;
+        tSumWork=0;
+        tSumWait=0;
+
+        for (int k = 0; k < DAYS; k++) {
+            Machine bulldozer = new Machine();
+            Excavator excavator1 = new Excavator();
+            Excavator excavator2 = new Excavator();
+
+            bulldozer.fillArray(bulldozer.massif, bulldozer.curTime, endTime,M_WORK_BULD,M_REP_BULD_S6);
+            calculatParameters(bulldozer,INCOME_BULD,COST_INACTIV_BULD);
+
+            excavator1.fillArrayEx(excavator1.massif, excavator1.curTime, endTime,bulldozer.massif, M_WORK_EXC, M_REP_EXC_S6);
+            calculatParameters(excavator1,INCOME_EXC ,COST_INACTIV_EXC);
+
+            excavator2.fillArrayEx2(excavator2.massif, excavator2.curTime, endTime,bulldozer.massif,excavator1.massif, M_WORK_EXC, M_REP_EXC_S6);
+            calculatParameters(excavator2,INCOME_EXC ,COST_INACTIV_EXC);
+
+            totalIncomeDay = bulldozer.income + excavator1.income + excavator2.income;
+            sumRep = Math.round((bulldozer.sumRep + excavator1.sumRep + excavator2.sumRep) * 10) / 10.0;
+            sumWork = Math.round((bulldozer.sumWork + excavator1.sumWork + excavator2.sumWork) * 10) / 10.0;
+            sumWait = Math.round((bulldozer.sumWait  + excavator1.sumWait + excavator2.sumWait) * 10) / 10.0;
+            salaryDay = (int) (SALARY_S6 * sumRep);
+            totalCostDay = salaryDay + bulldozer.cost + excavator1.cost  + excavator2.cost ;
+            profitDay = totalIncomeDay - totalCostDay;
+
+            totalIncome += totalIncomeDay;
+            totalCost += totalCostDay;
+            profitS6 += profitDay;
+            tSumWork += sumWork;
+            tSumWait += sumWait;
+            tSumRep += sumRep;
+
+            if (k == DAY_TO_PRINT) {
+                System.out.println("\nS6");
+                printDay(bulldozer,excavator1,excavator2,DAY_TO_PRINT);
+            }
+
+
+        }
+        totalIncome = totalIncome / DAYS;
+        totalCost = totalCost / DAYS;
+        profitS6 = profitS6 / DAYS;
+        tSumWork = Math.round((tSumWork / DAYS) * 10) / 10.0;
+        tSumWait = Math.round((tSumWork / DAYS) * 10) / 10.0;
+        tSumRep = Math.round((tSumWork / DAYS) * 10) / 10.0;
+
+        System.out.println("\nFor " + DAYS + " days:");
+        System.out.println("sumWork: " + tSumWork
+                +"\nsumWait: " + tSumWait
+                +"\nsumRepair: " + tSumRep
+                +"\ntotalIncome: " + totalIncome
+                +"\ntotalCost : " + totalCost
+                +"\nprofit: " + profitS6);
+
+
+        if (profitS6 >= profitS6S3) {
+            System.out.println("\nУволить");
+        }
+        else System.out.println("\nНе увольнять");
+
+
 
     }
 
-    private static void printArray(Object[][] array){
+    public static double readFromTheFile(String fileName,int i) {
+
+        try {
+            ArrayList<ArrayList> fileTable = new ArrayList();
+            fileLoading(fileName, fileTable,i);
+
+            double p = Double.parseDouble( (String) fileTable.get(i).get(0));
+
+            return p;
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    private static ArrayList<ArrayList> fileLoading(String fileName, ArrayList<ArrayList> fileTable,int i) throws IOException {
+
+        BufferedReader fileReader = new BufferedReader(new FileReader(fileName));
+        StringTokenizer tokens;
+        {
+            String line;
+            while ((line = fileReader.readLine()) != null) {
+                ArrayList tableLine = new ArrayList();
+                tokens = new StringTokenizer(line, "-");
+
+                while (tokens.hasMoreTokens()) {
+                    tableLine.add(tokens.nextToken());
+                }
+
+                fileTable.add(tableLine);
+            }
+        }
+//        for (int i = 0; i < fileTable.size(); i++) {
+//                System.out.print(fileTable.get(i).get(0) + " ");
+//            System.out.println("");
+//        }
+        return fileTable;
+    }
+
+    private static void calculatParameters(Machine machine, int incomConst, int costInst){
+        machine.sumWork = Machine.sumValueArray(machine.massif,machine.sumWork,1);
+        machine.sumRep = Machine.sumValueArray(machine.massif,machine.sumRep,2);
+        machine.sumWait = Machine.sumValueArray(machine.massif,machine.sumWait,3);
+        machine.income = (int) (incomConst * machine.sumWork);
+        machine.cost = (int)(costInst * (machine.sumRep + machine.sumWait));
+    }
+
+    private static void printArray(Object[][] array) {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String st = null;
         for (int i = 0; i < ROW_MASS; i++) {
 
-            for (int j = 0; j < COLUMN_MASS-2; j++) {
-                if(array[i][j] == null){
+            for (int j = 0; j < COLUMN_MASS - 2; j++) {
+                if (array[i][j] == null) {
                     return;
                 }
                 System.out.print(sdf.format(array[i][j]));
@@ -106,7 +296,47 @@ public class Implementation {
         }
     }
 
+        private static void printDay(Machine bulldozer,Excavator excavator1,Excavator excavator2,int DAY_TO_PRINT){
+            System.out.println(DAY_TO_PRINT + " day:");
+            System.out.println("BULLDOZER: ");
+            printArray(bulldozer.massif);
+
+            System.out.println("EXCAVATOR1: ");
+            printArray(excavator1.massif);
+
+            System.out.println("EXCAVATOR2: ");
+            printArray(excavator2.massif);
+
+            System.out.println("\nBULLDOZER: "
+                    + "\nsumWork: " + bulldozer.sumWork
+                    + "\nsumRep : " + bulldozer.sumRep
+                    + "\nsumWait: " + bulldozer.sumWait
+                    + "\nincome: " + bulldozer.income
+                    + "\ncost: " + bulldozer.cost);
+            System.out.println("\nEXCAVATOR1: "
+                    + "\nsumWork: " + excavator1.sumWork
+                    + "\nsumRep : " + excavator1.sumRep
+                    + "\nsumWait: " + excavator1.sumWait
+                    + "\nincome: " + excavator1.income
+                    + "\ncost: " + excavator1.cost);
+            System.out.println("\nEXCAVATOR2: "
+                    + "\nsumWork: " + excavator2.sumWork
+                    + "\nsumRep : " + excavator2.sumRep
+                    + "\nsumWait: " + excavator2.sumWait
+                    + "\nincome: " + excavator2.income
+                    + "\ncost: " + excavator2.cost);
+            System.out.println("\nsumWork: " + sumWork
+                    +"\nsumWait: " + sumWait
+                    +"\nsumRepair: " + sumRep
+                    +"\ntotalIncomeDay: " + totalIncomeDay
+                    +"\ntotalCostDay: " + totalCostDay
+                    +"\nprofitDay: " + profitDay);
+        }
+
 
 }
+
+
+
 
 

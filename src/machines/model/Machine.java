@@ -10,8 +10,28 @@ import java.util.Random;
  * Created by Nade_ on 28.11.2015.
  */
 public class Machine {
+     public  double sumWork;
+     public double sumRep;
+     public double sumWait;
+     public int cost;
+     public int income;
 
-     public void fillArray(Object[][] array, GregorianCalendar curTime, GregorianCalendar endTime) {
+     public Object[][] massif = new Object[Implementation.ROW_MASS][Implementation.COLUMN_MASS];
+     public GregorianCalendar curTime = new GregorianCalendar(0, 0, 0, Implementation.ST_LABOR_HH, Implementation.ST_LABOR_MM, 0);
+
+
+     public static double sumValueArray(Object[][] array,double sum, int status){
+          for (int i = 0; i < Implementation.ROW_MASS; i++) {
+               if(array[i][2] == null) return sum;
+               if (array[i][2].equals(status)) {
+                    sum +=  (double)array[i][3];
+                    sum = Math.round(sum * 10) / 10.0;
+               }
+          }
+          return sum;
+     }
+
+     public void fillArray(Object[][] array, GregorianCalendar curTime, GregorianCalendar endTime,double constWork, double constRep) {
           int status;
           double rand;
 
@@ -22,10 +42,10 @@ public class Machine {
                }
                array[i][0] = curTime.getTime();
                if ((i % 2) == 0) {
-                    rand = getRandomNumb(Implementation.M_WORK_BULD);
+                    rand = getRandomNumb(constWork);
                     status = 1; // status - work
                } else {
-                    rand = getRandomNumb(Implementation.M_REP_BULD_S3S6);
+                    rand = getRandomNumb(constRep);
                     status = 2; // status - repair
                }
                curTime.add(Calendar.MINUTE, (int) (rand * 60));

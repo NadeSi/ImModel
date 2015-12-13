@@ -35,7 +35,6 @@ public class Implementation {
     public static final int SALARY_S3 = (int) readFromTheFile(PARAM,10);
     public static final int SALARY_S6 = (int) readFromTheFile(PARAM,11);
 
-
     public static final int LABOR_HOURS = (int) readFromTheFile(PARAM,12);
 
     public static final int ST_LABOR_HH = (int) readFromTheFile(PARAM,13);
@@ -139,18 +138,18 @@ public class Implementation {
         totalCost = totalCost / DAYS;
         profitS6S3 = profitS6S3 / DAYS;
         tSumWork = Math.round((tSumWork / DAYS) * 10) / 10.0;
-        tSumWait = Math.round((tSumWork / DAYS) * 10) / 10.0;
-        tSumRep = Math.round((tSumWork / DAYS) * 10) / 10.0;
+        tSumWait = Math.round((tSumWait / DAYS) * 10) / 10.0;
+        tSumRep = Math.round((tSumRep / DAYS) * 10) / 10.0;
 
         System.out.println("\nFor " + DAYS + " days:");
-        System.out.println("sumWork: " + tSumWork
-                +"\nsumWait: " + tSumWait
-                +"\nsumRepair: " + tSumRep
-                +"\ntotalIncome: " + totalIncome
-                +"\ntotalCost : " + totalCost
-                +"\nprofit: " + profitS6S3);
+        System.out.println("Суммарное время работы: " + translateDuring((double)tSumWork)
+                +"\nСуммарное время ожидания: " + translateDuring((double)tSumWait)
+                +"\nСуммарное время ремонта: " + translateDuring((double)tSumRep)
+                +"\nДоходы: " + totalIncome
+                +"\nЗатраты : " + totalCost
+                +"\nЧистая прибыль: " + profitS6S3);
 
-//        ??? S6
+//        Для S6
         totalIncome =0;
         totalCost =0;
         tSumRep=0;
@@ -197,22 +196,21 @@ public class Implementation {
         totalCost = totalCost / DAYS;
         profitS6 = profitS6 / DAYS;
         tSumWork = Math.round((tSumWork / DAYS) * 10) / 10.0;
-        tSumWait = Math.round((tSumWork / DAYS) * 10) / 10.0;
-        tSumRep = Math.round((tSumWork / DAYS) * 10) / 10.0;
+        tSumWait = Math.round((tSumWait / DAYS) * 10) / 10.0;
+        tSumRep = Math.round((tSumRep / DAYS) * 10) / 10.0;
 
         System.out.println("\nFor " + DAYS + " days:");
-        System.out.println("sumWork: " + tSumWork
-                +"\nsumWait: " + tSumWait
-                +"\nsumRepair: " + tSumRep
-                +"\ntotalIncome: " + totalIncome
-                +"\ntotalCost : " + totalCost
-                +"\nprofit: " + profitS6);
-
+        System.out.println("Суммарное время работы: " + translateDuring((double)tSumWork)
+                +"\nСуммарное время ожидания: " + translateDuring((double)tSumWait)
+                +"\nСуммарное время ремонта: " + translateDuring((double)tSumRep)
+                +"\nДоходы: " + totalIncome
+                +"\nЗатраты : " + totalCost
+                +"\nЧистая прибыль: " + profitS6);
 
         if (profitS6 >= profitS6S3) {
-            System.out.println("\nУволить");
+            System.out.println("\nУволить слесаря 3-го разряда");
         }
-        else System.out.println("\nНе увольнять");
+        else System.out.println("\nНе увольнять слесаря 3-го разряда");
 
 
 
@@ -292,11 +290,22 @@ public class Implementation {
             } else {
             }
             System.out.print(" :" + st);
-            System.out.println(" (" + array[i][3] + ")");
+//            System.out.println(" (" + array[i][3] + ")");
+            System.out.println(" (" + translateDuring((double)array[i][3]) + ")");
         }
     }
 
-        private static void printDay(Machine bulldozer,Excavator excavator1,Excavator excavator2,int DAY_TO_PRINT){
+    public static String  translateDuring(double number){
+        int numberMin;
+        int res = (int)number; //целая часть
+//        double res2 = number - res; //дробная часть
+
+            numberMin = (int) (number * 60);
+        int res2 = numberMin - 60*res;
+            return (res + "," + res2);
+    }
+
+    private static void printDay(Machine bulldozer,Excavator excavator1,Excavator excavator2,int DAY_TO_PRINT){
             System.out.println(DAY_TO_PRINT + " day:");
             System.out.println("BULLDOZER: ");
             printArray(bulldozer.massif);
@@ -308,29 +317,30 @@ public class Implementation {
             printArray(excavator2.massif);
 
             System.out.println("\nBULLDOZER: "
-                    + "\nsumWork: " + bulldozer.sumWork
-                    + "\nsumRep : " + bulldozer.sumRep
-                    + "\nsumWait: " + bulldozer.sumWait
-                    + "\nincome: " + bulldozer.income
-                    + "\ncost: " + bulldozer.cost);
+                    + "\nРабота: " + translateDuring((double)bulldozer.sumWork)
+                    + "\nРемонт: " + translateDuring((double)bulldozer.sumRep)
+                    + "\nОжидание: " + translateDuring((double)bulldozer.sumWait)
+                    + "\nДоходы: " + bulldozer.income
+                    + "\nЗатраты: " + bulldozer.cost);
             System.out.println("\nEXCAVATOR1: "
-                    + "\nsumWork: " + excavator1.sumWork
-                    + "\nsumRep : " + excavator1.sumRep
-                    + "\nsumWait: " + excavator1.sumWait
-                    + "\nincome: " + excavator1.income
-                    + "\ncost: " + excavator1.cost);
+                    + "\nРабота: " + translateDuring((double)excavator1.sumWork)
+                    + "\nРемонт: " + translateDuring((double)excavator1.sumRep)
+                    + "\nОжидание: " + translateDuring((double)excavator1.sumWait)
+                    + "\nДоходы: " + excavator1.income
+                    + "\nЗатраты: " + excavator1.cost);
             System.out.println("\nEXCAVATOR2: "
-                    + "\nsumWork: " + excavator2.sumWork
-                    + "\nsumRep : " + excavator2.sumRep
-                    + "\nsumWait: " + excavator2.sumWait
-                    + "\nincome: " + excavator2.income
-                    + "\ncost: " + excavator2.cost);
-            System.out.println("\nsumWork: " + sumWork
-                    +"\nsumWait: " + sumWait
-                    +"\nsumRepair: " + sumRep
-                    +"\ntotalIncomeDay: " + totalIncomeDay
-                    +"\ntotalCostDay: " + totalCostDay
-                    +"\nprofitDay: " + profitDay);
+                    + "\nРабота: " + translateDuring((double)excavator2.sumWork)
+                    + "\nРемонт: " + translateDuring((double)excavator2.sumRep)
+                    + "\nОжидание: " + translateDuring((double)excavator2.sumWait)
+                    + "\nДоходы: " + excavator2.income
+                    + "\nЗатраты: " + excavator2.cost);
+            System.out.println("\nСуммарное время работы: " + translateDuring((double)sumWork)
+                    +"\nСуммарное время ожидания: " + translateDuring((double)sumWait)
+                    +"\nСуммарное время ремонта: " + translateDuring((double)sumRep)
+                    +"\nДоходы за день: " + totalIncomeDay
+                    +"\nЗатраты за день: " + totalCostDay
+                    +"\nЧистая прибыль за день: " + profitDay);
+
         }
 
 

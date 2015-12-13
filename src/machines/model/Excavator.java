@@ -98,7 +98,7 @@ public class Excavator extends Machine {
             }
 //            curTime.add(Calendar.MINUTE, (int) (rand * 60));
             if (curTime.getTime().after(endTime.getTime()) && status == 1) {
-                getDiffRand(rand, curTime, endTime);
+                rand = getDiffRand(rand, curTime, endTime,array[i][0]);
             }
             array[i][1] = curTime.getTime();
             array[i][2] = status;
@@ -246,7 +246,7 @@ public class Excavator extends Machine {
             }
 //            curTime.add(Calendar.MINUTE, (int) (rand * 60));
             if (curTime.getTime().after(endTime.getTime()) && status == 1) {
-                getDiffRand(rand, curTime, endTime);
+                rand = getDiffRand(rand, curTime, endTime,array[i][0]);
             }
             array[i][1] = curTime.getTime();
             array[i][2] = status;

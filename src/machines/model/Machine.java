@@ -3,6 +3,7 @@ package machines.model;
 import machines.UI.Implementation;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Random;
 
@@ -51,7 +52,7 @@ public class Machine {
                curTime.add(Calendar.MINUTE, (int) (rand * 60));
 //        System.out.println(sdf.format(calen.getTime()) + " (" + randBuld + ")");
                if (curTime.getTime().after(endTime.getTime()) && status == 1) {
-                    getDiffRand(rand, curTime, endTime);
+                    rand = getDiffRand(rand, curTime, endTime,array[i][0]);
                }
                array[i][1] = curTime.getTime();
                array[i][2] = status;
@@ -70,19 +71,25 @@ public class Machine {
 
      }
 
-     public static double getDiffRand(double rand, GregorianCalendar curTime, GregorianCalendar endTime) {
-          double difference = getDifference(curTime,endTime);
-          int dif = (int) (difference * 60);
-          curTime.add(Calendar.MINUTE, -dif);
-          rand = Math.abs(Math.abs(rand) - Math.abs(difference));
+     public static double getDiffRand(double rand, GregorianCalendar curTime, GregorianCalendar endTime, Object preDate) {
+          Calendar preCal;
+          preCal = Calendar.getInstance();
+//          double difference = getDifference(curTime,endTime);
+//          int dif = (int) (difference * 60);
+//          curTime.add(Calendar.MINUTE, -dif);
+          curTime.setTime(endTime.getTime());
+//          rand = Math.abs(rand - difference);
+          preCal.setTime((Date) preDate);
+          Date end = endTime.getTime();
+          rand = (double) (endTime.getTimeInMillis() - preCal.getTimeInMillis()) / 60 / 60000;
           return Math.round(rand * 10) / 10.0;
      }
 
-     public static double getDifference(Calendar curTime, Calendar endTime) {
-          double difference;
-          difference = (double) (curTime.getTimeInMillis() - endTime.getTimeInMillis()) / 60 / 60000;
-          return difference;
-     }
+//     public static double getDifference(Calendar curTime, Calendar endTime) {
+//          double difference;
+//          difference = (double) (curTime.getTimeInMillis() - endTime.getTimeInMillis()) / 60 / 60000;
+//          return difference;
+//     }
 }
 
 
